@@ -1,11 +1,17 @@
 import os
 import torch
 
-def initialize_device() -> None:
+def initialize_device() -> torch.device:
     """
     Initializes the device for computation and sets the environment variable for PyTorch.
 
     Code from github.com/facebookresearch/sam2/blob/main/notebooks/image_predictor_example.ipynb
+
+    Returns:
+        torch.device: The device for computation.
+    
+    Raises:
+        ValueError: If CUDA is not available.
     """
     torch.cuda.empty_cache()
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
@@ -20,10 +26,7 @@ def initialize_device() -> None:
         if torch.cuda.get_device_properties(0).major >= 8:
             torch.backends.cuda.matmul.allow_tf32 = True
             torch.backends.cudnn.allow_tf32 = True
-    elif device.type == "mps":
-        print(
-            "\nSupport for MPS devices is preliminary. SAM 2 is trained with CUDA and might "
-            "give numerically different outputs and sometimes degraded performance on MPS. "
-            "See e.g. https://github.com/pytorch/pytorch/issues/84936 for a discussion."
-        )
+    else:
+        return ValueError("CUDA is not available. Please install CUDA to run this stack.")
+       
     return device

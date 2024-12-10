@@ -88,6 +88,7 @@ def clip_tool(image_path: str):
     torch.cuda.empty_cache()
     model = CLIPModel.from_pretrained(model_name)
     processor = CLIPProcessor.from_pretrained(model_name)
+    device = torch.device("cuda")
     model.to(device)
 
     image = Image.open(image_path)
